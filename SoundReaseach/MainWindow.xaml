@@ -1,0 +1,337 @@
+﻿<!-- MainWindow.xaml -->
+<Window x:Class="SoundResearch.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Sound Manipulation Platform" Height="1200" Width="800">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="10">
+            <!-- 1. Control Buttons -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
+                <Button x:Name="RecordButton" Content="Record" Width="80" Height="30" Margin="5" Click="RecordButton_Click" />
+                <Button x:Name="PauseButton" Content="Pause" Width="80" Height="30" Margin="5" Click="PauseButton_Click" />
+                <Button x:Name="PlayButton" Content="Play" Width="80" Height="30" Margin="5" Click="PlayButton_Click" />
+                <Button x:Name="StopButton" Content="Stop" Width="80" Height="30" Margin="5" Click="StopButton_Click" />
+                <Button x:Name="SaveButton" Content="Save" Width="80" Height="30" Margin="5" Click="SaveButton_Click" />
+                <Button x:Name="OpenButton" Content="Open" Width="80" Height="30" Margin="5" Click="OpenButton_Click" />
+            </StackPanel>
+
+            <!-- 2. Waveform Display -->
+            <GroupBox Header="Waveform Display" Margin="0,0,0,10">
+                <Grid Height="200" Background="Black">
+                    <Label Content="Waveform Display" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Grid>
+            </GroupBox>
+
+            <!-- 3. Frequency and Amplitude Controls -->
+            <GroupBox Header="Basic Controls" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50*" />
+                        <ColumnDefinition Width="50*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <!-- Frequency -->
+                    <Label Content="Frequency (Hz)" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Margin="5" />
+                    <Slider x:Name="FrequencySlider" Minimum="20" Maximum="20000" Value="440" TickFrequency="100" Grid.Column="1" Grid.Row="0" Margin="5" ValueChanged="FrequencySlider_ValueChanged" />
+                    <!-- Amplitude -->
+                    <Label Content="Amplitude" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" Margin="5" />
+                    <Slider x:Name="AmplitudeSlider" Minimum="0" Maximum="1" Value="0.5" TickFrequency="0.05" Grid.Column="1" Grid.Row="1" Margin="5" ValueChanged="AmplitudeSlider_ValueChanged" />
+                </Grid>
+            </GroupBox>
+
+            <!-- 4. Waveform Type Control -->
+            <GroupBox Header="Waveform Type" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Waveform" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <ComboBox x:Name="WaveformComboBox" SelectedIndex="0" Grid.Column="1" Margin="5" Width="150" SelectionChanged="WaveformComboBox_SelectionChanged">
+                        <ComboBoxItem Content="Sine" />
+                        <ComboBoxItem Content="Square" />
+                        <ComboBoxItem Content="Sawtooth" />
+                        <ComboBoxItem Content="Triangle" />
+                    </ComboBox>
+                </Grid>
+            </GroupBox>
+
+            <!-- 5. Envelope (ADSR) Controls -->
+            <GroupBox Header="Envelope (ADSR)" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Content="Attack (s)" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <Slider x:Name="AttackSlider" Minimum="0" Maximum="5" Value="0.1" TickFrequency="0.1" Grid.Row="0" Grid.Column="1" Margin="5" ValueChanged="AttackSlider_ValueChanged" />
+
+                    <Label Content="Decay (s)" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <Slider x:Name="DecaySlider" Minimum="0" Maximum="5" Value="0.1" TickFrequency="0.1" Grid.Row="1" Grid.Column="1" Margin="5" ValueChanged="DecaySlider_ValueChanged" />
+
+                    <Label Content="Sustain Level" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <Slider x:Name="SustainSlider" Minimum="0" Maximum="1" Value="0.7" TickFrequency="0.1" Grid.Row="2" Grid.Column="1" Margin="5" ValueChanged="SustainSlider_ValueChanged" />
+
+                    <Label Content="Release (s)" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <Slider x:Name="ReleaseSlider" Minimum="0" Maximum="5" Value="0.1" TickFrequency="0.1" Grid.Row="3" Grid.Column="1" Margin="5" ValueChanged="ReleaseSlider_ValueChanged" />
+                </Grid>
+            </GroupBox>
+
+            <!-- 6. Filter Controls -->
+            <GroupBox Header="Filter" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Content="Filter Type" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <ComboBox x:Name="FilterTypeComboBox" SelectedIndex="0" Grid.Row="0" Grid.Column="1" Margin="5" Width="150" SelectionChanged="FilterTypeComboBox_SelectionChanged">
+                        <ComboBoxItem Content="Low-Pass" />
+                        <ComboBoxItem Content="High-Pass" />
+                        <ComboBoxItem Content="Band-Pass" />
+                    </ComboBox>
+
+                    <Label Content="Cutoff Frequency (Hz)" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <Slider x:Name="CutoffSlider" Minimum="20" Maximum="20000" Value="1000" TickFrequency="100" Grid.Row="1" Grid.Column="1" Margin="5" ValueChanged="CutoffSlider_ValueChanged" />
+
+                    <Label Content="Resonance (Q)" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <Slider x:Name="ResonanceSlider" Minimum="0.1" Maximum="10" Value="1" TickFrequency="0.1" Grid.Row="2" Grid.Column="1" Margin="5" ValueChanged="ResonanceSlider_ValueChanged" />
+                </Grid>
+            </GroupBox>
+
+            <!-- 7. Modulation Controls -->
+            <GroupBox Header="Modulation" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <CheckBox x:Name="EnableFMCheckBox" Content="Enable Frequency Modulation" Grid.Row="0" Grid.ColumnSpan="2" Margin="5" Checked="EnableFMCheckBox_Checked" Unchecked="EnableFMCheckBox_Unchecked" />
+
+                    <Label Content="FM Depth" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <Slider x:Name="FMDepthSlider" Minimum="0" Maximum="1000" Value="100" TickFrequency="50" Grid.Row="1" Grid.Column="1" Margin="5" ValueChanged="FMDepthSlider_ValueChanged" />
+
+                    <Label Content="FM Rate (Hz)" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <Slider x:Name="FMRateSlider" Minimum="0.1" Maximum="20" Value="1" TickFrequency="0.1" Grid.Row="2" Grid.Column="1" Margin="5" ValueChanged="FMRateSlider_ValueChanged" />
+                </Grid>
+            </GroupBox>
+
+            <!-- 8. Pan Control -->
+            <GroupBox Header="Pan Control" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Pan" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <Slider x:Name="PanSlider" Minimum="-1" Maximum="1" Value="0" TickFrequency="0.1" Grid.Column="1" Margin="5" ValueChanged="PanSlider_ValueChanged" />
+                </Grid>
+            </GroupBox>
+
+            <!-- 9. Effects Controls -->
+            <GroupBox Header="Effects" Margin="0,0,0,10">
+                <StackPanel Margin="10">
+                    <CheckBox x:Name="EnableReverbCheckBox" Content="Enable Reverb" Margin="0,0,0,5" Checked="EnableReverbCheckBox_Checked" Unchecked="EnableReverbCheckBox_Unchecked" />
+                    <Label Content="Reverb Level" Margin="0,5,0,0" />
+                    <Slider x:Name="ReverbLevelSlider" Minimum="0" Maximum="1" Value="0.5" TickFrequency="0.1" ValueChanged="ReverbLevelSlider_ValueChanged" />
+
+                    <CheckBox x:Name="EnableEchoCheckBox" Content="Enable Echo" Margin="0,10,0,5" Checked="EnableEchoCheckBox_Checked" Unchecked="EnableEchoCheckBox_Unchecked" />
+                    <Label Content="Echo Delay (ms)" Margin="0,5,0,0" />
+                    <Slider x:Name="EchoDelaySlider" Minimum="0" Maximum="2000" Value="500" TickFrequency="100" ValueChanged="EchoDelaySlider_ValueChanged" />
+                </StackPanel>
+            </GroupBox>
+
+            <!-- 10. Equalizer Controls -->
+            <GroupBox Header="Equalizer" Margin="0,0,0,10">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                    <!-- Low Band -->
+                    <StackPanel Margin="5">
+                        <Label Content="Low" HorizontalAlignment="Center" />
+                        <Slider x:Name="LowEQSlider" Minimum="-12" Maximum="12" Value="0" TickFrequency="1" Orientation="Vertical" Height="100" ValueChanged="LowEQSlider_ValueChanged" />
+                    </StackPanel>
+                    <!-- Mid Band -->
+                    <StackPanel Margin="5">
+                        <Label Content="Mid" HorizontalAlignment="Center" />
+                        <Slider x:Name="MidEQSlider" Minimum="-12" Maximum="12" Value="0" TickFrequency="1" Orientation="Vertical" Height="100" ValueChanged="MidEQSlider_ValueChanged" />
+                    </StackPanel>
+                    <!-- High Band -->
+                    <StackPanel Margin="5">
+                        <Label Content="High" HorizontalAlignment="Center" />
+                        <Slider x:Name="HighEQSlider" Minimum="-12" Maximum="12" Value="0" TickFrequency="1" Orientation="Vertical" Height="100" ValueChanged="HighEQSlider_ValueChanged" />
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- 11. Playback Speed and Direction Controls -->
+            <GroupBox Header="Playback Controls" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Content="Playback Speed" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <Slider x:Name="PlaybackSpeedSlider" Minimum="0.5" Maximum="2" Value="1" TickFrequency="0.1" Grid.Row="0" Grid.Column="1" Margin="5" ValueChanged="PlaybackSpeedSlider_ValueChanged" />
+
+                    <ToggleButton x:Name="ReversePlaybackButton" Content="Reverse Playback" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" Checked="ReversePlaybackButton_Checked" Unchecked="ReversePlaybackButton_Unchecked" />
+                </Grid>
+            </GroupBox>
+
+            <!-- 12. Noise Reduction Controls -->
+            <GroupBox Header="Noise Reduction" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <CheckBox x:Name="EnableNoiseGateCheckBox" Content="Enable Noise Gate" Grid.Row="0" Grid.ColumnSpan="2" Margin="5" Checked="EnableNoiseGateCheckBox_Checked" Unchecked="EnableNoiseGateCheckBox_Unchecked" />
+
+                    <Label Content="Threshold (dB)" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <Slider x:Name="NoiseGateThresholdSlider" Minimum="-80" Maximum="0" Value="-60" TickFrequency="5" Grid.Row="1" Grid.Column="1" Margin="5" ValueChanged="NoiseGateThresholdSlider_ValueChanged" />
+                </Grid>
+            </GroupBox>
+
+            <!-- 13. Sampling Rate and Bit Depth Controls -->
+            <GroupBox Header="Sampling and Bit Depth" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Content="Sampling Rate" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <ComboBox x:Name="SamplingRateComboBox" SelectedIndex="0" Grid.Row="0" Grid.Column="1" Margin="5" Width="150" SelectionChanged="SamplingRateComboBox_SelectionChanged">
+                        <ComboBoxItem Content="44100 Hz" />
+                        <ComboBoxItem Content="48000 Hz" />
+                        <ComboBoxItem Content="96000 Hz" />
+                    </ComboBox>
+
+                    <Label Content="Bit Depth" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <ComboBox x:Name="BitDepthComboBox" SelectedIndex="0" Grid.Row="1" Grid.Column="1" Margin="5" Width="150" SelectionChanged="BitDepthComboBox_SelectionChanged">
+                        <ComboBoxItem Content="16-bit" />
+                        <ComboBoxItem Content="24-bit" />
+                        <ComboBoxItem Content="32-bit" />
+                    </ComboBox>
+                </Grid>
+            </GroupBox>
+
+            <!-- 14. Sound Level Display -->
+            <GroupBox Header="Sound Level" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Sound Level (dB)" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <ProgressBar x:Name="SoundLevelProgressBar" Minimum="0" Maximum="100" Value="0" Grid.Column="1" Margin="5" Height="20" />
+                </Grid>
+            </GroupBox>
+
+            <!-- 15. Spatial Position Controls -->
+            <GroupBox Header="Spatial Position" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Content="X Position" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <Slider x:Name="SpatialXSlider" Minimum="-1" Maximum="1" Value="0" TickFrequency="0.1" Grid.Row="0" Grid.Column="1" Margin="5" ValueChanged="SpatialXSlider_ValueChanged" />
+
+                    <Label Content="Y Position" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <Slider x:Name="SpatialYSlider" Minimum="-1" Maximum="1" Value="0" TickFrequency="0.1" Grid.Row="1" Grid.Column="1" Margin="5" ValueChanged="SpatialYSlider_ValueChanged" />
+                </Grid>
+            </GroupBox>
+
+            <!-- 16. Input Gain Controls -->
+            <GroupBox Header="Input Gain" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Content="Input Gain" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <Slider x:Name="InputGainSlider" Minimum="0" Maximum="1" Value="0.5" TickFrequency="0.1" Grid.Row="0" Grid.Column="1" Margin="5" ValueChanged="InputGainSlider_ValueChanged" />
+
+                    <CheckBox x:Name="EnableMonitoringCheckBox" Content="Enable Monitoring" Grid.Row="1" Grid.ColumnSpan="2" Margin="5" Checked="EnableMonitoringCheckBox_Checked" Unchecked="EnableMonitoringCheckBox_Unchecked" />
+                </Grid>
+            </GroupBox>
+
+            <!-- 17. Loop Points Controls -->
+            <GroupBox Header="Loop Points" Margin="0,0,0,10">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                    <Button x:Name="SetLoopStartButton" Content="Set Loop Start" Width="120" Margin="5" Click="SetLoopStartButton_Click" />
+                    <Button x:Name="SetLoopEndButton" Content="Set Loop End" Width="120" Margin="5" Click="SetLoopEndButton_Click" />
+                </StackPanel>
+            </GroupBox>
+
+            <!-- 18. Harmonic Emphasis Control -->
+            <GroupBox Header="Harmonic Emphasis" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Harmonic Emphasis" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <Slider x:Name="HarmonicSlider" Minimum="0" Maximum="1" Value="0.5" TickFrequency="0.1" Grid.Column="1" Margin="5" ValueChanged="HarmonicSlider_ValueChanged" />
+                </Grid>
+            </GroupBox>
+
+            <!-- 19. Phase Adjustment Control -->
+            <GroupBox Header="Phase Adjustment" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Phase (Degrees)" Grid.Column="0" VerticalAlignment="Center" Margin="5" />
+                    <Slider x:Name="PhaseSlider" Minimum="0" Maximum="360" Value="0" TickFrequency="30" Grid.Column="1" Margin="5" ValueChanged="PhaseSlider_ValueChanged" />
+                </Grid>
+            </GroupBox>
+        </StackPanel>
+    </ScrollViewer>
+</Window>
